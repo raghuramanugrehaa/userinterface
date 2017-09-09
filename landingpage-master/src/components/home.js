@@ -1,12 +1,38 @@
-import React from "react";
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { NavLink } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import axios from 'axios';
+//import {Data} from './data';
 
-import DateTimeField from 'react-bootstrap-datetimepicker';
-export  class Home extends React.Component {
+export  class Home extends Component {
+
+
+///ajax  impeentation
+constructor(props) {
+   super(props);
+
+   this.state = {
+     posts: []
+   };
+}
+
+componentDidMount() {
+   axios.get(`http://13.126.47.35:8080/AccountRight/48b58bb2-e017-4368-87c4-1fe44c1334ca/Sale/Invoice/Service`,{headers: {
+        "Authorization" : "Basic QWRtaW5pc3RyYXRvcjo=",
+        "x-myobapi-version":"v2"
+      }
+    }).then(res => {
+
+       const posts = res.data.Items;
+
+       this.setState({posts});
+//  console.log("checcd "+JSON.stringify(this.state.posts));
+     });
+ }
+
+
 
     createCustomToolBar = props => {
       return (
@@ -27,45 +53,8 @@ export  class Home extends React.Component {
     }
 
     render() {
+//console.log("ffinal "+this.state.posts);
 
-    var products = [{
-           id: 123,
-           name: "Srini Associatyes Pty Ltd",
-           price: 14589,
-           date:"21-2-2017",
-           status:"open"
-       },{
-           id: 345,
-           name: "Shreedas Group Pty Ltd",
-           price: 14758,
-           date:"21-2-2017",
-           status:"open"
-       },{
-                id: 698,
-                name: "Om Shakti (Others)",
-                price: 96587,
-                date:"21-2-2017",
-                 status:"open"
-            },{
-                     id: 789,
-                     name: "North Shore Catering",
-                     price: 78456,
-                     date:"21-2-2017",
-                     status:"open"
-
-                 },{
-                          id: 741,
-                          name: "Muvva Holding Pty Ltd",
-                          price: 25410,
-                          date:"21-2-2017",
-                         status:"open"
-                      },{
-                               id: 145,
-                               name: "Lotus Mart",
-                               price: 50000,
-                               date:"21-2-2017",
-                               status:"open"
-                           }];
       const selectRow = {
         mode: 'checkbox',
         showOnlySelected: true
@@ -75,7 +64,9 @@ export  class Home extends React.Component {
       };
       return (
 
-       <BootstrapTable data={ products }
+
+ //{this.state.posts.data.Items.map(post =>
+       <BootstrapTable data={ this.state.posts }
           options={ options }
 
           selectRow={ selectRow }
@@ -84,17 +75,21 @@ export  class Home extends React.Component {
           search
           deleteRow
           pagination>
-          <TableHeaderColumn dataField='id' isKey={ true }>Invoice ID</TableHeaderColumn>
-          <TableHeaderColumn dataField='name'>Customer Name</TableHeaderColumn>
-          <TableHeaderColumn dataField='price'>Price</TableHeaderColumn>
-          <TableHeaderColumn dataField='status'>status</TableHeaderColumn>
-          <TableHeaderColumn dataField='date'>Date</TableHeaderColumn>
+          <TableHeaderColumn dataField='Number' isKey={ true }>Invoice ID</TableHeaderColumn>
+          <TableHeaderColumn dataField='UID'>Customer Name</TableHeaderColumn>
+          <TableHeaderColumn dataField='TotalAmount'>Price</TableHeaderColumn>
+          <TableHeaderColumn dataField='Status'>status</TableHeaderColumn>
+          <TableHeaderColumn dataField='Date'>Date</TableHeaderColumn>
         </BootstrapTable>
 
+//)}
 
 
       );
     }
   }
-
+  ReactDOM.render(
+    <Home subreddit="reactjs"/>,
+    document.getElementById('root')
+  );
 export default Home;
